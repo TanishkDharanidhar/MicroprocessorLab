@@ -9,7 +9,7 @@ void delay_ms(uint32_t delay_in_ms) {
   // Calculate counter value for desired delay (adjust based on clock frequency)
   uint32_t counter_value = (SystemCoreClock / (128 * 1000)) * delay_in_ms;
 
-  TPM0->MOD = counter_value - 1; // Set modulo register
+  TPM0_MOD = counter_value - 1; // Set modulo register
 
   // Wait for the interrupt flag to be set (indicating delay completion)
   while (!(TPM0->SC & TPM_SC_TOF_MASK));
