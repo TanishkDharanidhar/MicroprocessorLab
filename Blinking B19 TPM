@@ -14,12 +14,6 @@ void delay_ms(uint32_t delay_in_ms) {
   // Wait for the interrupt flag to be set (indicating delay completion)
   while (!(TPM0->SC & TPM_SC_TOF_MASK));
 
-  // Clear the interrupt flag
-  TPM0->SC &= ~TPM_SC_TOF_MASK;
-
-  // Disable timer and clock gating
-  TPM0->SC &= ~TPM_SC_TOIE_MASK;
-  SIM_SCGC6 &= ~SIM_SCGC6_TPM0_MASK;
 }
 
 int main(void)
