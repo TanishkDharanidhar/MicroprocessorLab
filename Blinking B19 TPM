@@ -30,10 +30,10 @@ int main(void)
 
 	while(1)
 	{
-			GPIOB_PDOR = 0xFFFFFFFF;
-		  delay_ms(500000);
+		GPIOB_PDOR = 0xFFFFFFFF;
+		delay_ms(10000);
 			
-			GPIOB_PDOR = 0x00000000;
-			delay_ms(500000);
+		GPIOB_PDOR = 0x00000000;
+		delay_ms(10000);
 	}	
 }
