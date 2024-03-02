@@ -1,0 +1,75 @@
+#include "MKL25Z4.h"
+
+#define ZERO 0xFFFFF327
+#define ONE 0xFFFFF77F
+#define TWO 0xFFFFF3C7
+#define THREE 0xFFFFF357
+#define FOUR 0xFFFFF71F
+#define FIVE 0xFFFFFB17
+#define SIX 0xFFFFFB07
+#define SEVEN 0xFFFFF37F
+#define EIGHT 0xFFFFF307
+#define NINE 0xFFFFF31F
+#define B 0xFFFFFF07
+#define A 0xFFFFF30F
+#define T 0xFFFFFF87
+#define C 0xFFFFFBA7
+#define H 0xFFFFFF0F
+#define SPACE 0xFFFFFFFF
+
+
+void delay_ms(uint32_t delay_in_ms) {
+  SIM_SOPT2 |= 0x01000000; // Set clock source to Bus Clock
+  SIM_SCGC6 |= 0x01000000; // Enable clock for TPM0
+
+  TPM0_SC |= 0x004F; // Set prescaler to 128 
+
+  // Calculate counter value for desired delay (adjust based on clock frequency)
+  uint32_t counter_value = (SystemCoreClock / (128 * 1000)) * delay_in_ms;
+
+  TPM0_MOD = counter_value - 1; // Set modulo register
+
+  // Wait for the interrupt flag to be set (indicating delay completion)
+  while (!(TPM0->SC & TPM_SC_TOF_MASK));
+
+}
+
+int main(void)
+{
+  int num,i,j;
+
+  SIM_SCGC5 |= 0x0C00;
+  GPIOC_PDDR = 0xFFFFFFFF;
+  PORTC_PCR11 = 0x00000100;
+  PORTC_PCR10 = 0x00000100;
+  PORTC_PCR6 = 0x00000100;
+  PORTC_PCR5 = 0x00000100;
+  PORTC_PCR4 = 0x00000100;
+  PORTC_PCR3 = 0x00000100;
+  PORTC_PCR7 = 0x00000100;
+  GPIOB_PDDR = 0xFFFFFFFF;
+  PORTB_PCR0 = 0x00000100;
+  PORTB_PCR1 = 0x00000100;
+  PORTB_PCR2 = 0x00000100;
+  PORTB_PCR3 = 0x00000100;
+	
+	static uint32_t dispText[] = {B, A, T, C, H, SPACE, TWO, ZERO, TWO, TWO, SPACE};
+  while(1){
+    for(i = 0; i < 11; i++){
+			for(int k = 0; k < 42; k++){
+      GPIOB_PDOR = 1;
+      GPIOC_PDOR = dispText[(i) % 11];
+      delay_ms(5);
+      GPIOB_PDOR = 2;
+      GPIOC_PDOR = dispText[(i + 1) % 11];
+      delay_ms(5);
+      GPIOB_PDOR = 4;
+      GPIOC_PDOR = dispText[(i + 2) % 11];
+      delay_ms(5);
+      GPIOB_PDOR = 8;
+      GPIOC_PDOR = dispText[(i + 3) % 11];
+      delay_ms(5);
+    }
+	}
+}
+}
