@@ -1,0 +1,64 @@
+#include "MKL25Z4.h"
+
+#define ZERO 0xFFFFF327
+#define ONE 0xFFFFF77F
+#define TWO 0xFFFFF3C7
+#define THREE 0xFFFFF357
+#define FOUR 0xFFFFF71F
+#define FIVE 0xFFFFFB17
+#define SIX 0xFFFFFB07
+#define SEVEN 0xFFFFF37F
+#define EIGHT 0xFFFFF307
+#define NINE 0xFFFFF31F
+
+int main(void)
+{
+	int i=0;
+	int j=0;
+	int num=0;
+	//int tensDigit, onesDigit;
+	
+	
+	SIM_SCGC5 |= 0x0C00;
+	GPIOC_PDDR = 0xFFFFFFFF;
+	PORTC_PCR11 = 0x00000100;
+	PORTC_PCR10 = 0x00000100;
+	PORTC_PCR6 = 0x00000100;
+	PORTC_PCR5 = 0x00000100;
+	PORTC_PCR4 = 0x00000100;
+	PORTC_PCR3 = 0x00000100;
+	PORTC_PCR7 = 0x00000100;
+	GPIOB_PDDR = 0xFFFFFFFF;
+	PORTB_PCR1 = 0x00000100;
+	PORTB_PCR2 = 0x00000100;
+	
+uint32_t l[] = {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE,ZERO};
+
+while(1)
+	{
+		for(num=0;num<10;num++)
+		{
+			//tensDigit = num / 10;
+			//onesDigit = num % 10;	
+			
+			for(i=0;i<5000;i++)
+				{
+					GPIOB_PDOR = 0x00000002;
+					GPIOC_PDOR = l[num];
+					for(j=0;j<500;j++)
+					{
+						__NOP();
+					}
+				
+					GPIOB_PDOR = 0x00000004;
+					GPIOC_PDOR = l[num+1];
+					for(j=0;j<500;j++)
+					{
+						__NOP();
+					}
+				}
+		}
+	}
+		
+	
+	
