@@ -1,0 +1,55 @@
+#include "MKL25Z4.h"
+
+void delay_ms(uint32_t delay_in_ms) {
+  SIM_SOPT2 |= 0x01000000; // Set clock source to Bus Clock
+  SIM_SCGC6 |= 0x01000000; // Enable clock for TPM0
+
+  TPM0_SC |= 0x004F; // Set prescaler to 128
+
+  // Calculate counter value for desired delay (adjust based on clock frequency)
+  //uint32_t counter_value = (SystemCoreClock / (128 * 1000)) * delay_in_ms;
+	uint32_t counter_value = (SystemCoreClock / (128 * 10000)) * delay_in_ms; // delay in 0.1ms
+
+  TPM0->MOD = counter_value - 1; // Set modulo register
+
+  // Wait for the interrupt flag to be set (indicating delay completion)
+  while (!(TPM0->SC & TPM_SC_TOF_MASK));
+
+  // Clear the interrupt flag
+  TPM0->SC &= ~TPM_SC_TOF_MASK;
+
+  // Disable timer and clock gating
+  TPM0->SC &= ~TPM_SC_TOIE_MASK;
+  SIM_SCGC6 &= ~SIM_SCGC6_TPM0_MASK;
+}
+
+int main(void)
+{
+	uint32_t i;
+	
+	SIM_SCGC5 |= 0x0400;
+
+	GPIOB_PDDR = 0xFFFFFFFF;
+	PORTB_PCR19 = 0x00000100;
+
+	
+	while(1)
+	{
+		for(i = 1; i < 100; i++)
+			{
+			GPIOB_PDOR = 0xFFFFFFFF;
+		  delay_ms(i);
+			
+			GPIOB_PDOR = 0x00000000;
+			delay_ms(100-i);
+			}
+		for(i = 1; i < 100; i++)
+			{
+			GPIOB_PDOR = 0xFFFFFFFF;
+		  delay_ms(100-i);
+			
+			GPIOB_PDOR = 0x00000000;
+			delay_ms(i);
+			}
+	}	
+}
