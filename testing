@@ -35,7 +35,7 @@ void delay_ms(uint32_t delay_in_ms) {
 int main(void) {
     int i;
 
-    SIM_SCGC5 |= 0x0C00;
+    SIM_SCGC5 |= 0x3C00;
 	
     GPIOC_PDDR = 0xFFFFFFFF;
     PORTC_PCR11 = 0x00000100;
@@ -72,31 +72,31 @@ int main(void) {
 
     while (1) {
         for (i = 0; i < 11; i++) {
-            for (int k = 0; k < 2; k++) {
-                for (int duty_cycle = 0; duty_cycle <= 200; duty_cycle += 10) {
+            for (int k = 0; k < 20; k++) {
+                for (uint32_t duty_cycle = 0; duty_cycle <= 10; duty_cycle += 10) {
                     TPM1_C1V = duty_cycle; // Set duty cycle for TPM1 Channel 1
 
                     GPIOB_PDOR = 1;
                     GPIOC_PDOR = dispText[(i) % 11];
-                    delay_ms(5);
+                    delay_ms(1);
                     GPIOB_PDOR = 2;
                     GPIOC_PDOR = dispText[(i + 1) % 11];
-                    delay_ms(5);
+                    delay_ms(1);
                     GPIOB_PDOR = 4;
                     GPIOC_PDOR = dispText[(i + 2) % 11];
-                    delay_ms(5);
+                    delay_ms(1);
                     GPIOB_PDOR = 8;
                     GPIOC_PDOR = dispText[(i + 3) % 11];
-                    delay_ms(5);
+                    delay_ms(1);
 										GPIOE_PDOR = 0x00100000;
                     GPIOC_PDOR = dispText[(i + 4) % 11];
-                    delay_ms(5);
+                    delay_ms(1);
 										GPIOE_PDOR = 0x00200000;
                     GPIOC_PDOR = dispText[(i + 5) % 11];
-                    delay_ms(5);
+                    delay_ms(1);
 										GPIOE_PDOR = 0x00400000;
                     GPIOC_PDOR = dispText[(i + 6) % 11];
-                    delay_ms(5);
+                    delay_ms(1);
                 }
             }
         }
