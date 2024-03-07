@@ -1,0 +1,57 @@
+#include "MKL25Z4.h"
+
+int main(void)
+{
+	int i=0,a=0;
+	SIM_SOPT5 = 0x0000;
+	SIM_SOPT2 |= 0x04000000;
+	SIM_SCGC6 |= 0x08000000;
+	SIM_SCGC5 |= 0x0600;
+	SIM_SCGC4 |= 0x0400;
+	PORTA_PCR2 = 0x0200;
+	PORTA_PCR1 = 0x0200;
+	PORTB_PCR1 = 0x0000;
+	ADC0_SC1A = 0x0009;
+	ADC0_CFG1 = 0x0000;
+	
+	
+	UART0_BDH= 0x00;
+	UART0_BDL=0x82;
+	UART0_C2=0x0C;
+	
+	
+  /*while(1) 
+    {
+        
+			 {
+					ADC0_SC1A = 0x0000;
+          while(!(ADC0_SC1A &0x80)){
+                __NOP();
+          }
+					//UART0_D = ;
+					a = ADC0_RA;
+				  UART0_D = i;
+					if (i < 256){
+					i++;
+					}
+					else{i =0;}
+					while(!(UART0_S1 & 0x80))
+					{
+							__NOP();
+					}*/
+					 while (1){
+		 ADC0_SC1A = 0x00000009;
+     while (!(ADC0_SC1A & 0x0080)) {
+       __NOP();
+     }
+
+     a = ADC0_RA;
+		 UART0_D = a;
+		 
+		 while (!(UART0_S1 & 0x80)) {
+		 a++;
+            __NOP();
+			 }
+		 }
+    }
+		
