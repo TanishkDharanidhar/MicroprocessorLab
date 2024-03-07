@@ -1,0 +1,32 @@
+#include "MKL25Z4.h"
+
+int main(void)
+{
+	SIM_SOPT5 = 0x0000;
+	SIM_SOPT2 |= 0x04000000;
+	SIM_SCGC6 |= 0x08000000;
+	SIM_SCGC5 |= 0x0600;
+	SIM_SCGC4 |= 0x0400;
+	PORTA_PCR2 = 0x0200;
+	PORTA_PCR1 = 0x0200;
+	PORTB_PCR1 = 0x0000;
+	
+	
+	UART0_BDH= 0x00;
+	UART0_BDL=0x82;
+	UART0_C2=0x0C;
+	uint8_t i = 0;
+
+  while(1) 
+    {
+       const char b[]  = "Hello World\t";
+
+       for(i = 0; i < sizeof(b) - 1; i = i + 1) 
+			 {
+					UART0_D = b[i];
+          while(!(UART0_S1&0x80)){
+                __NOP();
+          }
+			 }
+    }
+		}
