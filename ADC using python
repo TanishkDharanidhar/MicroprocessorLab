@@ -23,35 +23,36 @@ int main(void)
   /*while(1) 
     {
         
-			 {
-					ADC0_SC1A = 0x0000;
-          while(!(ADC0_SC1A &0x80)){
-                __NOP();
-          }
-					//UART0_D = ;
-					a = ADC0_RA;
-				  UART0_D = i;
-					if (i < 256){
-					i++;
-					}
-					else{i =0;}
-					while(!(UART0_S1 & 0x80))
-					{
-							__NOP();
-					}*/
-					 while (1){
-		 ADC0_SC1A = 0x00000009;
-     while (!(ADC0_SC1A & 0x0080)) {
-       __NOP();
-     }
+	 {
+		ADC0_SC1A = 0x0000;
+         	 while(!(ADC0_SC1A &0x80)){
+                	__NOP();
+          	}
+		//UART0_D = ;
+		a = ADC0_RA;
+		UART0_D = i;
+		if (i < 256){
+			i++;
+		}
+		else{i =0;}
+		while(!(UART0_S1 & 0x80))
+		{
+			__NOP();
+		}*/
 
-     a = ADC0_RA;
-		 UART0_D = a;
+		while (1){
+	 	ADC0_SC1A = 0x00000009;
+    		while (!(ADC0_SC1A & 0x0080)) {
+       			__NOP();
+     		}
+
+     		a = ADC0_RA;
+		UART0_D = a;
 		 
 		 while (!(UART0_S1 & 0x80)) {
-		 a++;
-            __NOP();
-			 }
-		 }
+		 	a++;
+            		__NOP();
+		}
+	  }
     }
 		
