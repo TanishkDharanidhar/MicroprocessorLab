@@ -56,3 +56,14 @@ int main(void)
 	  }
     }
 		
+// python code
+import serial
+import binascii
+
+ser = serial.Serial('COM3',9600)
+
+i = 1
+
+while i==1:
+        rx_raw = ser.read()
+        print(ord(rx_raw))
