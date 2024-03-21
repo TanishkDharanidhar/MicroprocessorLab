@@ -1,0 +1,186 @@
+#include "MKL25Z4.h"
+
+#define ZERO 0xFFFFF327
+#define ONE 0xFFFFF77F
+#define TWO 0xFFFFF3C7
+#define THREE 0xFFFFF357
+#define FOUR 0xFFFFF71F
+#define FIVE 0xFFFFFB17
+#define SIX 0xFFFFFB07
+#define SEVEN 0xFFFFF37F
+#define EIGHT 0xFFFFF307
+#define NINE 0xFFFFF31F
+
+// button ID
+#define FLOOR0 0x0000008F
+#define FLOOR1 0x000000AE
+#define FLOOR2 0x000000AB
+#define FLOOR3 0x000000A7
+#define FLOOR4 0x000000AD
+#define FLOOR5 0x0000002F
+
+//LED ID
+#define LED0 0x40000000
+#define LED1 0x20000000
+#define LED2 0x00800000
+#define LED3 0x00400000
+#define LED4 0x00200000
+#define LED5 0x00100000
+#define LEDOFF 0x00000000
+
+int curr, next;
+static uint32_t floor[] = {FLOOR0, FLOOR1, FLOOR2, FLOOR3, FLOOR4, FLOOR5};
+static uint32_t led[] = {LED0, LED1, LED2, LED3, LED4, LED5};
+static uint32_t number[] = {ZERO, ONE, TWO, THREE, FOUR, FIVE};
+
+void delay_ms(uint32_t delay_in_ms) {
+  SIM_SOPT2 |= 0x01000000; // Set clock source to Bus Clock
+  SIM_SCGC6 |= 0x01000000; // Enable clock for TPM0
+
+  TPM0_SC |= 0x004F; // Set prescaler to 128 
+
+  // Calculate counter value for desired delay (adjust based on clock frequency)
+  uint32_t counter_value = (SystemCoreClock / (128 * 1000)) * delay_in_ms;
+
+  TPM0_MOD = counter_value - 1; // Set modulo register
+
+  // Wait for the interrupt flag to be set (indicating delay completion)
+  while (!(TPM0->SC & TPM_SC_TOF_MASK));
+
+}
+void delay_s(int num) {
+	while(num > 0) {
+		delay_ms(250);
+		delay_ms(250);
+		delay_ms(250);
+		delay_ms(250);
+		num = num -1;
+	}
+}
+
+void PORTD_IRQHandler(void)
+{
+	uint32_t a, b;
+	a = GPIOD_PDIR;
+	delay_ms(1); // for switch debouncing
+	b = GPIOD_PDIR;
+	if (a == b)
+    {
+			
+			switch(a) {
+				case FLOOR0:
+					curr = 0;
+					//GPIOE_PDOR = LED0; 
+					//GPIOC_PDOR = ZERO;
+					break;
+				case FLOOR1:
+					curr = 1;
+					//GPIOE_PDOR = LED1; 
+					//GPIOC_PDOR = ONE;
+					break;
+				case FLOOR2:
+					curr = 2;
+					//GPIOE_PDOR = LED2; 
+					//GPIOC_PDOR = TWO;
+					break;
+				case FLOOR3:
+					curr = 3;
+					//GPIOE_PDOR = LED3; 
+					//GPIOC_PDOR = THREE;
+					break;
+				case FLOOR4:
+					curr = 4;
+					//GPIOE_PDOR = LED4; 
+					//GPIOC_PDOR = FOUR;
+					break;
+				case FLOOR5:
+					curr = 5;
+					//GPIOE_PDOR = LED5; 
+					//GPIOC_PDOR = FIVE;
+					break;
+				//default:
+					//GPIOE_PDOR = LEDOFF; 
+			}
+			
+			GPIOE_PDOR = led[curr];
+			
+
+			int x = 0;
+			GPIOC_PDOR = number[x];
+			while(curr > 0) 
+			{
+				x = x + 1;
+				curr = curr - 1;
+				GPIOC_PDOR = number[x];
+				delay_ms(250);
+				GPIOC_PDOR = 0xFFFFFFFF;
+				delay_ms(250);
+				GPIOC_PDOR = number[x];
+				delay_ms(250);
+				GPIOC_PDOR = 0xFFFFFFFF;
+				delay_ms(250);
+				
+				
+			}
+		
+			if(curr == 0){
+				GPIOE_PDOR = LEDOFF;
+				GPIOC_PDOR = number[x];
+				/*
+				delay_ms(250);
+				
+				delay_ms(250);
+				delay_ms(250);
+				*/
+			}
+			
+    }
+		//PORTD_ISFR = 0xFFFF;
+}
+
+
+int main(void)
+{
+	
+	
+	SIM_SCGC5 |= 0x3F00;
+	
+	// gives output, 7-seg LED
+	GPIOC_PDDR = 0xFFFFFFFF;
+	PORTC_PCR11 = 0x00000100;
+	PORTC_PCR10 = 0x00000100;
+	PORTC_PCR6 = 0x00000100;
+	PORTC_PCR5 = 0x00000100;
+	PORTC_PCR4 = 0x00000100;
+	PORTC_PCR3 = 0x00000100;
+	PORTC_PCR7 = 0x00000100;
+	
+	
+	// gives output, lift LED
+	GPIOE_PDDR = 0xFFFFFFFF;
+	PORTE_PCR20 = 0x00000100;
+	PORTE_PCR21 = 0x00000100;
+	PORTE_PCR22 = 0x00000100;
+	PORTE_PCR23 = 0x00000100;
+	PORTE_PCR29 = 0x00000100;
+	PORTE_PCR30 = 0x00000100;
+	
+	// takes input, Button
+	GPIOD_PDDR = 0x00000000;
+	PORTD_PCR0 = 0x00090103;
+	PORTD_PCR1 = 0x00090103;
+	PORTD_PCR2 = 0x00090103;
+	PORTD_PCR3 = 0x00090103;
+	PORTD_PCR5 = 0x00090103;
+	PORTD_PCR7 = 0x00090103;
+	
+	NVIC_EnableIRQ(0x1F);
+	
+	
+	for(;;)
+	{
+	}
+	
+		
+	
+}
