@@ -109,40 +109,39 @@ void PORTD_IRQHandler(void)
 			GPIOC_PDOR = number[x];
 			while(curr > 0) 
 			{
-				x = x + 1;
-				curr = curr - 1;
-				GPIOC_PDOR = number[x];
-				delay_ms(250);
-				GPIOC_PDOR = 0xFFFFFFFF;
-				delay_ms(250);
-				GPIOC_PDOR = number[x];
-				delay_ms(250);
-				GPIOC_PDOR = 0xFFFFFFFF;
-				delay_ms(250);
 				
+				GPIOC_PDOR = number[x];
+				delay_ms(250);
+				GPIOC_PDOR = 0xFFFFFFFF;
+				delay_ms(250);
+				GPIOC_PDOR = number[x];
+				delay_ms(250);
+				GPIOC_PDOR = 0xFFFFFFFF;
+				delay_ms(250);
+				x = x + 1;
+				
+				curr = curr - 1;
 				
 			}
 		
 			if(curr == 0){
 				GPIOE_PDOR = LEDOFF;
 				GPIOC_PDOR = number[x];
-				/*
-				delay_ms(250);
 				
-				delay_ms(250);
-				delay_ms(250);
-				*/
-			}
+//				delay_s(5);
+				}
+				
+		
 			
     }
-		//PORTD_ISFR = 0xFFFF;
+		PORTD_ISFR = 0xFFFF;
 }
 
 
 int main(void)
 {
-	
-	
+
+//	PORTD_ISFR = 0xFFFF;
 	SIM_SCGC5 |= 0x3F00;
 	
 	// gives output, 7-seg LED
@@ -167,15 +166,15 @@ int main(void)
 	
 	// takes input, Button
 	GPIOD_PDDR = 0x00000000;
-	PORTD_PCR0 = 0x00090103;
-	PORTD_PCR1 = 0x00090103;
+	PORTD_PCR0 = 0x000A0103;
+	PORTD_PCR1 = 0x000A0103;
 	PORTD_PCR2 = 0x00090103;
-	PORTD_PCR3 = 0x00090103;
-	PORTD_PCR5 = 0x00090103;
-	PORTD_PCR7 = 0x00090103;
+	PORTD_PCR3 = 0x000A0103;
+	PORTD_PCR5 = 0x000A0103;
+	PORTD_PCR7 = 0x000A0103;
 	
-	NVIC_EnableIRQ(0x1F);
 	
+NVIC_EnableIRQ(0x1F);
 	
 	for(;;)
 	{
